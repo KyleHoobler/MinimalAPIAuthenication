@@ -2,6 +2,7 @@
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using MinimalAPIAuthentication.Repositories;
 using MinimalAPIAuthentication.Services;
 using MinimalAPITest.Services.Authentication;
 
@@ -15,6 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
 builder.Services.AddTransient<IHashService, HashService>();
+builder.Services.AddSingleton<ILoginRepository, LoginRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 builder.Services.AddAuthorization(options =>
@@ -25,6 +27,8 @@ builder.Services.AddAuthorization(options =>
 });
 
 var app = builder.Build();
+
+////TODO: Configure authorization...
 
 app.UseFastEndpoints();
 
@@ -38,7 +42,7 @@ if (app.Environment.IsDevelopment())
 
 
 
-app.MapGet("Hello", () => "Hello World!");
+app.MapGet("Hello", [Authorize]() => "Hello World!");
 
 
 app.Run();
